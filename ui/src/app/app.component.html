@@ -91,8 +91,8 @@
                   <ng-select [items]="customDirs$ | async" placeholder="Default" [addTag]="allowCustomDir.bind(this)" addTagText="Create directory" [ngStyle]="{'flex-grow':'1'}" bindLabel="folder" [(ngModel)]="folder" [disabled]="addInProgress || downloads.loading"></ng-select>
                 </div>
                 <div class="input-group add-url-component">
-                  <span class="input-group-text">Custom Name Prefix</span>
-                  <input type="text" autocomplete="off" spellcheck="false" class="form-control" placeholder="Default" name="customNamePrefix" [(ngModel)]="customNamePrefix" [disabled]="addInProgress || downloads.loading">
+                  <span class="input-group-text">Custom Name</span>
+                  <input type="text" autocomplete="off" spellcheck="false" class="form-control" placeholder="Default" name="customName" [(ngModel)]="customName" [disabled]="addInProgress || downloads.loading">
                 </div>
               </div>
             </div>

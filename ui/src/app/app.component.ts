@@ -22,7 +22,7 @@ export class AppComponent implements AfterViewInit {
   quality: string;
   format: string;
   folder: string;
-  customNamePrefix: string;
+  customName: string;
   autoStart: boolean;
   addInProgress = false;
   themes: Theme[] = Themes;
@@ -176,17 +176,17 @@ export class AppComponent implements AfterViewInit {
     this.quality = exists ? this.quality : 'best'
   }
 
-  addDownload(url?: string, quality?: string, format?: string, folder?: string, customNamePrefix?: string, autoStart?: boolean) {
+  addDownload(url?: string, quality?: string, format?: string, folder?: string, customName?: string, autoStart?: boolean) {
     url = url ?? this.addUrl
     quality = quality ?? this.quality
     format = format ?? this.format
     folder = folder ?? this.folder
-    customNamePrefix = customNamePrefix ?? this.customNamePrefix
+    customName = customName ?? this.customName
     autoStart = autoStart ?? this.autoStart
 
-    console.debug('Downloading: url='+url+' quality='+quality+' format='+format+' folder='+folder+' customNamePrefix='+customNamePrefix+' autoStart='+autoStart);
+    console.debug('Downloading: url='+url+' quality='+quality+' format='+format+' folder='+folder+' customName='+customName+' autoStart='+autoStart);
     this.addInProgress = true;
-    this.downloads.add(url, quality, format, folder, customNamePrefix, autoStart).subscribe((status: Status) => {
+    this.downloads.add(url, quality, format, folder, customName, autoStart).subscribe((status: Status) => {
       if (status.status === 'error') {
         alert(`Error adding URL: ${status.msg}`);
       } else {
@@ -201,7 +201,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   retryDownload(key: string, download: Download) {
-    this.addDownload(download.url, download.quality, download.format, download.folder, download.custom_name_prefix, true);
+    this.addDownload(download.url, download.quality, download.format, download.folder, download.custom_name, true);
     this.downloads.delById('done', [key]).subscribe();
   }
 

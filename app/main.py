@@ -116,13 +116,13 @@ async def add(request):
         raise web.HTTPBadRequest()
     format = post.get('format')
     folder = post.get('folder')
-    custom_name_prefix = post.get('custom_name_prefix')
+    custom_name = post.get('custom_name')
     auto_start = post.get('auto_start')
-    if custom_name_prefix is None:
-        custom_name_prefix = ''
+    if custom_name is None:
+        custom_name = ''
     if auto_start is None:
         auto_start = True
-    status = await dqueue.add(url, quality, format, folder, custom_name_prefix, auto_start)
+    status = await dqueue.add(url, quality, format, folder, custom_name, auto_start)
     return web.Response(text=serializer.encode(status))
 
 @routes.post(config.URL_PREFIX + 'delete')

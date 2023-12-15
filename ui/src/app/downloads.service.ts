@@ -16,7 +16,7 @@ export interface Download {
   quality: string;
   format: string;
   folder: string;
-  custom_name_prefix: string;
+  custom_name: string;
   status: string;
   msg: string;
   percent: number;
@@ -99,8 +99,8 @@ export class DownloadsService {
     return of({status: 'error', msg: msg})
   }
 
-  public add(url: string, quality: string, format: string, folder: string, customNamePrefix: string, autoStart: boolean) {
-    return this.http.post<Status>('add', {url: url, quality: quality, format: format, folder: folder, custom_name_prefix: customNamePrefix, auto_start: autoStart}).pipe(
+  public add(url: string, quality: string, format: string, folder: string, customName: string, autoStart: boolean) {
+    return this.http.post<Status>('add', {url: url, quality: quality, format: format, folder: folder, custom_name: customName, auto_start: autoStart}).pipe(
       catchError(this.handleHTTPError)
     );
   }

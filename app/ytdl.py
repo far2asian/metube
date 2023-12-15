@@ -29,14 +29,14 @@ class DownloadQueueNotifier:
         raise NotImplementedError
 
 class DownloadInfo:
-    def __init__(self, id, title, url, quality, format, folder, custom_name_prefix, error):
-        self.id = id if len(custom_name_prefix) == 0 else f'{custom_name_prefix}.{id}'
-        self.title = title if len(custom_name_prefix) == 0 else f'{custom_name_prefix}.{title}'
+    def __init__(self, id, title, url, quality, format, folder, custom_name, error):
+        self.id = id if len(custom_name) == 0 else f'{custom_name}'
+        self.title = title if len(custom_name) == 0 else f'{custom_name}'
         self.url = url
         self.quality = quality
         self.format = format
         self.folder = folder
-        self.custom_name_prefix = custom_name_prefix
+        self.custom_name = custom_name
         self.msg = self.percent = self.speed = self.eta = None
         self.status = "pending"
         self.timestamp = time.time_ns()
@@ -209,7 +209,7 @@ class DownloadQueue:
 
     async def __import_queue(self):
         for k, v in self.queue.saved_items():
-            await self.add(v.url, v.quality, v.format, v.folder, v.custom_name_prefix)
+            await self.add(v.url, v.quality, v.format, v.folder, v.custom_name)
 
     async def initialize(self):
         self.event = asyncio.Event()
@@ -248,7 +248,7 @@ class DownloadQueue:
             dldirectory = base_directory
         return dldirectory, None
 
-    async def __add_entry(self, entry, quality, format, folder, custom_name_prefix, auto_start, already):
+    async def __add_entry(self, entry, quality, format, folder, custom_name, auto_start, already):
         if not entry:
             return {'status': 'error', 'msg': "Invalid/empty data was given."}
 
@@ -272,17 +272,17 @@ class DownloadQueue:
                 for property in ("id", "title", "uploader", "uploader_id"):
                     if property in entry:
                         etr[f"playlist_{property}"] = entry[property]
-                results.append(await self.__add_entry(etr, quality, format, folder, custom_name_prefix, auto_start, already))
+                results.append(await self.__add_entry(etr, quality, format, folder, custom_name, auto_start, already))
             if any(res['status'] == 'error' for res in results):
                 return {'status': 'error', 'msg': ', '.join(res['msg'] for res in results if res['status'] == 'error' and 'msg' in res)}
             return {'status': 'ok'}
         elif etype == 'video' or etype.startswith('url') and 'id' in entry and 'title' in entry:
             if not self.queue.exists(entry['id']):
-                dl = DownloadInfo(entry['id'], entry['title'], entry.get('webpage_url') or entry['url'], quality, format, folder, custom_name_prefix, error)
+                dl = DownloadInfo(entry['id'], entry['title'], entry.get('webpage_url') or entry['url'], quality, format, folder, custom_name, error)
                 dldirectory, error_message = self.__calc_download_path(quality, format, folder)
                 if error_message is not None:
                     return error_message
-                output = self.config.OUTPUT_TEMPLATE if len(custom_name_prefix) == 0 else f'{custom_name_prefix}.{self.config.OUTPUT_TEMPLATE}'
+                output = self.config.OUTPUT_TEMPLATE if len(custom_name) == 0 else f'{custom_name}'
                 output_chapter = self.config.OUTPUT_TEMPLATE_CHAPTER
                 for property, value in entry.items():
                     if property.startswith("playlist"):
@@ -295,10 +295,10 @@ class DownloadQueue:
                 await self.notifier.added(dl)
             return {'status': 'ok'}
         elif etype.startswith('url'):
-            return await self.add(entry['url'], quality, format, folder, custom_name_prefix, auto_start, already)
+            return await self.add(entry['url'], quality, format, folder, custom_name, auto_start, already)
         return {'status': 'error', 'msg': f'Unsupported resource "{etype}"'}
 
-    async def add(self, url, quality, format, folder, custom_name_prefix, auto_start=True, already=None):
+    async def add(self, url, quality, format, folder, custom_name, auto_start=True, already=None):
         log.info(f'adding {url}: {quality=} {format=} {already=} {folder=} {custom_name_prefix=}')
         already = set() if already is None else already
         if url in already:
@@ -310,7 +310,7 @@ class DownloadQueue:
             entry = await asyncio.get_running_loop().run_in_executor(None, self.__extract_info, url)
         except yt_dlp.utils.YoutubeDLError as exc:
             return {'status': 'error', 'msg': str(exc)}
-        return await self.__add_entry(entry, quality, format, folder, custom_name_prefix, auto_start, already)
+        return await self.__add_entry(entry, quality, format, folder, custom_name, auto_start, already)
 
     async def start_pending(self, ids):
         for id in ids:
