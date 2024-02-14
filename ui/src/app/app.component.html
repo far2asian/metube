@@ -76,27 +76,30 @@
           </div>
         </div>
         <div class="col-md-3 add-url-component">
-          <div [attr.class]="showAdvanced() ? 'btn-group add-url-group' : 'add-url-group'" ngbDropdown #advancedDropdown="ngbDropdown" display="dynamic" placement="bottom-end">
             <button class="btn btn-primary add-url" type="submit" (click)="addDownload()" [disabled]="addInProgress || downloads.loading">
               <span class="spinner-border spinner-border-sm" role="status" id="add-spinner" *ngIf="addInProgress"></span>
               {{ addInProgress ? "Adding..." : "Add" }}
             </button>
-            <button class="btn btn-primary dropdown-toggle dropdown-toggle-split" id="advancedButton" type="button" title="Advanced options" [disabled]="addInProgress || downloads.loading" ngbDropdownAnchor (click)="advancedDropdown.open()" *ngIf="showAdvanced()">
-              <span class="sr-only">Advanced options</span>
-            </button>
-            <div ngbDropdownMenu aria-labelledby="advancedButton" class="dropdown-menu dropdown-menu-end folder-dropdown-menu">
-              <div class="container">
-                <div class="input-group add-url-component">
-                  <span class="input-group-text">Download Folder</span>
-                  <ng-select [items]="customDirs$ | async" placeholder="Default" [addTag]="allowCustomDir.bind(this)" addTagText="Create directory" [ngStyle]="{'flex-grow':'1'}" bindLabel="folder" [(ngModel)]="folder" [disabled]="addInProgress || downloads.loading"></ng-select>
-                </div>
-                <div class="input-group add-url-component">
-                  <span class="input-group-text">Custom Name</span>
-                  <input type="text" autocomplete="off" spellcheck="false" class="form-control" placeholder="Default" name="customName" [(ngModel)]="customName" [disabled]="addInProgress || downloads.loading">
-                </div>
-              </div>
-            </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col add-url-component">
+          <div class="input-group">
+            <span class="input-group-text">Speed</span>
+            <input type="number" autocomplete="off" spellcheck="false" class="form-control" placeholder="0" name="speedLimit" [(ngModel)]="speedLimit" [disabled]="addInProgress || downloads.loading">
           </div>
+        </div>
+        <div class="col add-url-component">
+          <div class="input-group">
+            <span class="input-group-text">Custom Name</span>
+            <input type="text" autocomplete="off" spellcheck="false" class="form-control" placeholder="Default" name="customName" [(ngModel)]="customName" [disabled]="addInProgress || downloads.loading">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-group">
+          <span class="input-group-text">Download Folder</span>
+          <ng-select [items]="customDirs$ | async" placeholder="Default" [addTag]="allowCustomDir.bind(this)" addTagText="Create directory" [ngStyle]="{'flex-grow':'1'}" bindLabel="folder" [(ngModel)]="folder" [disabled]="addInProgress || downloads.loading"></ng-select>
         </div>
       </div>
     </div>
@@ -115,7 +118,8 @@
         <th scope="col">
           <button type="button" class="btn btn-link text-decoration-none px-0 me-4" disabled #queueDelSelected (click)="delSelectedDownloads('queue')"><fa-icon [icon]="faTrashAlt"></fa-icon>&nbsp; Cancel selected</button>
         </th>
-        <th scope="col" style="width: 14rem;"></th>
+        <th scope="col" style="width: 14rem;">Folder</th>
+        <th scope="col" style="width: 14rem;">Progress</th>
         <th scope="col" style="width: 8rem;">Speed</th>
         <th scope="col" style="width: 7rem;">ETA</th>
         <th scope="col" style="width: 2rem;"></th>
@@ -129,6 +133,7 @@
           <app-slave-checkbox [id]="download.key" [master]="queueMasterCheckbox" [checkable]="download.value"></app-slave-checkbox>
         </td>
         <td title="{{ download.value.filename }}">{{ download.value.title }}</td>
+        <td>{{ download.value.folder }}</td>
         <td><ngb-progressbar height="1.5rem" [showValue]="download.value.status != 'preparing'" [striped]="download.value.status == 'preparing'" [animated]="download.value.status == 'preparing'" type="success" [value]="download.value.status == 'preparing' ? 100 : download.value.percent | number:'1.0-0'"></ngb-progressbar></td>
         <td>{{ download.value.speed | speed }}</td>
         <td>{{ download.value.eta | eta }}</td>
