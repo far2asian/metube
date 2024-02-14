@@ -152,7 +152,9 @@
           <button type="button" class="btn btn-link text-decoration-none px-0 me-4" disabled #doneDelSelected (click)="delSelectedDownloads('done')"><fa-icon [icon]="faTrashAlt"></fa-icon>&nbsp; Clear selected</button>
           <button type="button" class="btn btn-link text-decoration-none px-0 me-4" disabled #doneClearCompleted (click)="clearCompletedDownloads()"><fa-icon [icon]="faCheckCircle"></fa-icon>&nbsp; Clear completed</button>
           <button type="button" class="btn btn-link text-decoration-none px-0 me-4" disabled #doneClearFailed (click)="clearFailedDownloads()"><fa-icon [icon]="faTimesCircle"></fa-icon>&nbsp; Clear failed</button>
+          <button type="button" class="btn btn-link text-decoration-none px-0 me-4" disabled #doneRetryFailed (click)="retryFailedDownloads()"><fa-icon [icon]="faRedoAlt"></fa-icon>&nbsp; Retry failed</button>
         </th>
+        <th scope="col" >File Size</th>
         <th scope="col" style="width: 2rem;"></th>
         <th scope="col" style="width: 2rem;"></th>
         <th scope="col" style="width: 2rem;"></th>
@@ -175,6 +177,9 @@
             <span *ngIf="download.value.msg"><br>{{download.value.msg}}</span>
             <span *ngIf="download.value.error"><br>Error: {{download.value.error}}</span>
           </ng-template>
+        </td>
+        <td>
+          <span *ngIf="download.value.size">{{ download.value.size | fileSize }}</span>
         </td>
         <td>
           <button *ngIf="download.value.status == 'error'" type="button" class="btn btn-link" (click)="retryDownload(download.key, download.value)"><fa-icon [icon]="faRedoAlt"></fa-icon></button>
