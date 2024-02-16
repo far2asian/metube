@@ -303,7 +303,7 @@ class DownloadQueue:
         return {'status': 'error', 'msg': f'Unsupported resource "{etype}"'}
 
     async def add(self, url, quality, format, folder, custom_name, auto_start=True, already=None):
-        log.info(f'adding {url}: {quality=} {format=} {already=} {folder=} {custom_name_prefix=}')
+        log.info(f'adding {url}: {quality=} {format=} {already=} {folder=} {custom_name=}')
         already = set() if already is None else already
         if url in already:
             log.info('recursion detected, skipping')
